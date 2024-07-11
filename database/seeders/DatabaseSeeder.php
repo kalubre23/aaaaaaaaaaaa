@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,10 +13,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $seeders = [
-            RoleSeeder::class
+            RoleSeeder::class,
+            UserSeeder::class,
+            SubjectSeeder::class
         ];
 
-        foreach ($seeders as $seeder) {
+        foreach($seeders as $seeder) {
             $this->call($seeder);
         }
     }

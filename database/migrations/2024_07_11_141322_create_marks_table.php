@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('teacher_id')->index('teacher_id')->nullable();
             $table->unsignedBigInteger('student_id')->index('student_id')->nullable();
-            $table->smallInteger('mark')->nullable();
+            $table->smallInteger('value')->nullable();
             $table->timestamps();
         });
     }
