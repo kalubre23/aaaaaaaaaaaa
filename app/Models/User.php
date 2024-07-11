@@ -75,11 +75,6 @@ class User extends Authenticatable
     ];
 
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class, 'role_id');
-    }
-
     public function subjects(): HasMany
     {
         return $this->hasMany(Subject::class, 'teacher_id')->whereHas('role', function ($query) {
