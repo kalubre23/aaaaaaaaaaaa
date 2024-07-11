@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -20,7 +21,43 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
+        'parent_id'
     ];
+
+    /**
+     * Get the user that owns the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function marksAsStudent()
+    {
+        return $this->hasMany(Mark::class, 'student_id');
+    }
+
+    public function marksAsTeacher()
+    {
+        return $this->hasMany(Mark::class, 'teacher_id');
+    }
+
+    public function scopeStudents($query)
+    {
+        return $query->whereHas('role', function($q) {
+            $q->where('name', 'Student');
+        });
+    }
+
+    public function scopeTeachers($query)
+    {
+        return $query->whereHas('role', function($q) {
+            $q->where('name', 'Teacher');
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.
