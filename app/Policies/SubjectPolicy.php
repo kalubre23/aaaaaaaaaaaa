@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Subject;
 use App\Models\User;
 
 class SubjectPolicy
@@ -22,9 +23,9 @@ class SubjectPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $record): bool
+    public function view(User $user, Subject $record): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() && $user->id === $record->teacher_id;
     }
 
     /**
@@ -38,16 +39,16 @@ class SubjectPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $record): bool
+    public function update(User $user, Subject $record): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() && $user->id === $record->teacher_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $record): bool
+    public function delete(User $user, Subject $record): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() && $user->id === $record->teacher_id;
     }
 }

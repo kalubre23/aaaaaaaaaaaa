@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubjectRequest;
+use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
 use App\Models\Subject;
 use Carbon\Carbon;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class SubjectController extends Controller
@@ -81,24 +84,66 @@ class SubjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Subject $subject)
     {
-        //
+        Gate::authorize('view', $subject);
+        
+        if(empty($subject)) {
+            throw new NotFoundHttpException('Subject not found.', null, 404);
+        }
+        try {
+            $subject->load(['teacher']);
+
+            return new SubjectResource($subject);
+        } catch (\Exception $e) {
+            Log::channel('err')->error('There was an error SubjectController@show -->' . $e->getMessage());
+            return response()->json(['message' => 'There was an error'], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StoreSubjectRequest $request, Subject $subject)
     {
-        //
+        Gate::authorize('update', $subject);
+
+        try {
+            $data = $request->validated();
+            $subject->fill($data);
+
+            $changes = $subject->getDirty();
+            if (!empty($changes['teacher_id']) && !$request->user()->isAdmin()) {
+                abort(403);
+            }
+
+            $subject->save();
+
+            return response()->json(['message' => 'Subject updated successfully.', 'data' => new SubjectResource($subject)], 200);
+        } catch (ValidationException $e) {
+            return response()->json(['message' => 'There was an error', 'errors' => $e->errors()], 422);
+        } catch (HttpException $e) {
+            return response()->json(['message' => 'This action is unauthorized.'], 403);
+        } catch (Throwable $th) {
+            Log::channel('err')->error('There was an error SubjectController@update -->' . $th->getMessage());
+            return response()->json(['message' => "There was an error"], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Subject $subject)
     {
-        //
+        Gate::authorize('delete', $subject);
+        
+        try {
+            $subject->delete();
+
+            return response()->json(['message' => 'Subject successfully deleted.'], 200);
+        } catch (Throwable $th) {
+            Log::channel('err')->error('There was an error UserController@destroy -->' . $th->getMessage());
+            return response()->json(['message' => "There was an error"], 500);
+        }
     }
 }
