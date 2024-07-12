@@ -166,7 +166,7 @@ class SubjectController extends Controller
         $invalidUsers = [];    
         foreach ($students as $user) {
             if (!$user->isStudent()) {
-                $invalidUsers[] = $user;
+                $invalidUsers[] = $user->id;
             }
         }
         if (!empty($invalidUsers)) {
@@ -186,5 +186,27 @@ class SubjectController extends Controller
         }
 
         return response()->json(['message' => 'Successfully added students to the subjects.'], 200);
+    }
+
+    public function remove_students(Request $request, Subject $subject)
+    {
+        Gate::authorize('remove_students', Subject::class);
+
+        $request->validate([
+            'students' => ['required', 'regex:/^(\d+,)*\d+$/'],
+        ], [
+            'students.required' => 'At least one student must be chosen.',
+            'students.regex' => 'Student field must be in CSV format.',
+        ]);
+
+        try {
+            SubjectStudent::whereIn('student_id', explode(',', $request->students))->where('subject_id', $subject->id)->delete();
+
+            return response()->json(['message' => 'Successfully removed students from the subject.'], 200);
+        } catch (\Throwable $th) {
+            Log::channel('err')->error('There was an error SubjectController@remove_students -->' . $th->getMessage());
+            return response()->json(['message' => "There was an error"], 500);
+        }
+        
     }
 }

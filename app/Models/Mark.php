@@ -8,15 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Mark extends Model
 {
     use HasFactory;
-    protected $fillable = ['teacher_id', 'student_id', 'mark'];
+    protected $fillable = ['inserted_by', 'student_id', 'value', 'subject_id'];
 
     public function student()
     {
         return $this->belongsTo(User::class, 'student_id');
     }
 
-    public function teacher()
+    public function subject()
     {
-        return $this->belongsTo(User::class, 'teacher_id');
+        return $this->belongsTo(Subject::class, 'subject_id');
+    }
+
+    public function insertedBy()
+    {
+        return $this->belongsTo(User::class, 'inserted_by');
     }
 }

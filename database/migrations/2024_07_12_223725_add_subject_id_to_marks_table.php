@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('marks', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('inserted_by')->nullable();
-            $table->unsignedBigInteger('student_id')->nullable();
-            $table->smallInteger('value')->nullable();
-            $table->timestamps();
+        Schema::table('marks', function (Blueprint $table) {
+            $table->string('subject_id')->nullable()->after('inserted_by');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('marks');
+        Schema::table('marks', function (Blueprint $table) {
+            $table->dropColumn('subject_id');
+        });
     }
 };

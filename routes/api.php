@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MarkController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -14,4 +15,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     Route::apiResource('/subjects', SubjectController::class);
     Route::post('/subjects/{subject}/add', [SubjectController::class, 'add_students'])->name('subjects.add_students');
+    Route::post('/subjects/{subject}/remove', [SubjectController::class, 'remove_students'])->name('subjects.remove_students');
+
+    Route::get('/marks/{subject}/{student?}', [MarkController::class, 'marks'])->name('marks.marks');
+    Route::post('/marks/{subject}/{student}', [MarkController::class, 'store'])->name('marks.store');
 });
