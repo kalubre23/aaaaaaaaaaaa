@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'role_id' => fake()->randomElement(Role::where('id', '<>', 4)->get()),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'role' => fake()->randomElement(Role::all()),
+            'role_id' => fake()->randomElement(Role::all()),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];

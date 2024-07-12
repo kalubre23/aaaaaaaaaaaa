@@ -13,4 +13,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     
     Route::apiResource('/subjects', SubjectController::class);
+    Route::post('/subjects/{subject}/add', [SubjectController::class, 'add_students'])->name('subjects.add_students');
 });

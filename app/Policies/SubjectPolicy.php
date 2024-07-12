@@ -51,4 +51,9 @@ class SubjectPolicy
     {
         return $user->isTeacher() && $user->id === $record->teacher_id;
     }
+
+    public function add_students(User $user, Subject $record): bool
+    {
+        return $user->isTeacher();
+    }
 }

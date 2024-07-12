@@ -40,29 +40,29 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function marksAsStudent()
-    {
-        return $this->hasMany(Mark::class, 'student_id');
-    }
+    // public function marksAsStudent()
+    // {
+    //     return $this->hasMany(Mark::class, 'student_id');
+    // }
 
-    public function marksAsTeacher()
-    {
-        return $this->hasMany(Mark::class, 'teacher_id');
-    }
+    // public function marksAsTeacher()
+    // {
+    //     return $this->hasMany(Mark::class, 'teacher_id');
+    // }
 
-    public function scopeStudents($query)
-    {
-        return $query->whereHas('role', function($q) {
-            $q->where('name', 'Student');
-        });
-    }
+    // public function scopeStudents($query)
+    // {
+    //     return $query->whereHas('role', function($q) {
+    //         $q->where('name', 'Student');
+    //     });
+    // }
 
-    public function scopeTeachers($query)
-    {
-        return $query->whereHas('role', function($q) {
-            $q->where('name', 'Teacher');
-        });
-    }
+    // public function scopeTeachers($query)
+    // {
+    //     return $query->whereHas('role', function($q) {
+    //         $q->where('name', 'Teacher');
+    //     });
+    // }
 
     /**
      * The attributes that should be hidden for serialization.

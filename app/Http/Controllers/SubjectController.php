@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubjectRequest;
+use App\Http\Requests\StudentsSubjectRequest;
 use App\Http\Requests\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
 use App\Models\Subject;
+use App\Models\SubjectStudent;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -142,8 +145,46 @@ class SubjectController extends Controller
 
             return response()->json(['message' => 'Subject successfully deleted.'], 200);
         } catch (Throwable $th) {
-            Log::channel('err')->error('There was an error UserController@destroy -->' . $th->getMessage());
+            Log::channel('err')->error('There was an error SubjectController@destroy -->' . $th->getMessage());
             return response()->json(['message' => "There was an error"], 500);
         }
+    }
+
+    public function add_students(Request $request, Subject $subject)
+    {
+        Gate::authorize('add_students', Subject::class);
+
+        $request->validate([
+            'students' => ['required', 'regex:/^(\d+,)*\d+$/'],
+        ], [
+            'students.required' => 'At least one student must be chosen.',
+            'students.regex' => 'Student field must be in CSV format.',
+        ]);
+
+        $students = User::whereIn('id', explode(',', $request->students))->get();
+
+        $invalidUsers = [];    
+        foreach ($students as $user) {
+            if (!$user->isStudent()) {
+                $invalidUsers[] = $user;
+            }
+        }
+        if (!empty($invalidUsers)) {
+            throw new HttpException(422, 'Ids: '. implode(', ', $invalidUsers) . ' are not students');
+        }
+        
+        foreach ($students as $student) {
+            try {
+                SubjectStudent::create([
+                    'student_id' => $student->id,
+                    'subject_id' => $subject->id
+                ]);
+            } catch (Throwable $th) {
+                Log::channel('err')->error('There was an error SubjectController@add_students -->' . $th->getMessage());
+                return response()->json(['message' => "There was an error"], 500);
+            }
+        }
+
+        return response()->json(['message' => 'Successfully added students to the subjects.'], 200);
     }
 }
