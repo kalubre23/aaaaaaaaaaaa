@@ -41,7 +41,7 @@ class MarkPolicy
      */
     public function update(User $user, Mark $record): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() && $user->id===$record->inserted_by;
     }
 
     /**
@@ -49,6 +49,6 @@ class MarkPolicy
      */
     public function delete(User $user, Mark $record): bool
     {
-        return $user->isTeacher();
+        return $user->isTeacher() && $user->id===$record->inserted_by;
     }
 }

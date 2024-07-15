@@ -22,15 +22,24 @@ class MarkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => 'required|integer'
+            //'inserted_by' => 'required|integer',
+            //'student_id' => 'required|integer',
+            'value' => 'required|integer',
+            //'subject_id' => 'required|integer'
         ];
     }
 
     public function messages(): array
     {
         return [
+            // 'inserted_by.required' => 'Inserted by value is required.',
+            // 'inserted_by.integer' => 'Inserted by must be an integer.',
+            // 'student_id.required' => 'Student id value is required.',
+            // 'student_id.integer' => 'Student id must be an integer.',
             'value.required' => 'Mark value is required.',
-            'value.integer' => 'Marko must be an integer.'
+            'value.integer' => 'Mark must be an integer.',
+            // 'subject_id.required' => 'Subject id value is required.',
+            // 'subject_id.integer' => 'Subject id must be an integer.'
         ];
     }
 }
