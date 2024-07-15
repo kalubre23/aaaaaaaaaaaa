@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Subject;
+use App\Models\SubjectStudent;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -18,6 +21,72 @@ use Throwable;
 
 class UserController extends Controller
 {
+    public function listStudents($subject_id){
+        Gate::authorize('viewAny', User::class);
+
+        try{
+            // // Number of users per page
+            // $perPage = $request->input('perPage', 10); // Default to 10 if not provided
+
+            // // Query the User model
+            // $users = User::where('role_id', 1)
+            //     ->paginate($perPage);
+
+            if(auth()->user()->isTeacher()){
+                $subject = Subject::where('teacher_id', auth()->user()->id)->first();
+    
+                if(empty($subject)) {
+                    return response()->json(['message' => 'There is no subject that is being taught'], 422);
+    
+                }
+            }
+
+
+            // $rawData = DB::table('users')
+            //     ->join('subject_students', 'users.id', '=', 'subject_students.student_id')
+            //     ->where('users.role_id', 1) // Filter for students
+            //     ->where('subject_students.subject_id', $subject->id) // Filter for specific subject
+            //     ->select('users.*') // Select all columns from the users table
+            //     ->get();
+
+            // $students = $rawData->map(function ($item) {
+            //     return User::hydrate([$item])->first();
+            // });
+
+            // return UserResource::collection($students);
+            //return response()->json($students);
+
+            $results = DB::table('subject_students')
+            ->select('subject_students.id', 'marks.id AS mark_id', 'users.id AS user_id', 'users.name', 'users.surname', 'marks.value')
+            ->leftJoin('marks', function ($join) {
+                $join->on('subject_students.student_id', '=', 'marks.student_id')
+                ->on('subject_students.subject_id', '=', 'marks.subject_id');
+            })
+                ->leftJoin('users', 'subject_students.student_id', '=', 'users.id')
+                ->where('subject_students.subject_id', '=', $subject_id)
+                ->where('users.role_id', '=', 1)
+                ->get();
+
+            $students = $results->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'mark_id' => $item->mark_id,
+                    'user_id' => $item->user_id,
+                    'name' => $item->name,
+                    'surname' => $item->surname,
+                    'mark' => $item->value ? json_decode($item->value) : null // Include the mark or null
+                ];
+            });
+
+            return response()->json($students);
+        } catch (Throwable $th) {
+            Log::channel('err')->error(time() . " There was an error UserController@listStudents " . $th->getMessage());
+
+            throw new Exception("There was an error", 500);
+        }
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -94,6 +163,10 @@ class UserController extends Controller
         }
         try {
             $user->load(['role']);
+
+            //if($user->role == "student" || ($user->role == "parent" && )){
+
+            //}
 
             return new UserResource($user);
         } catch (\Exception $e) {
