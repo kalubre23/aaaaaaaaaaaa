@@ -116,6 +116,7 @@ class SubjectController extends Controller
             $subject->fill($data);
 
             $changes = $subject->getDirty();
+            //samo korisnik moze da mjenja teacher_id na subjectu
             if (!empty($changes['teacher_id']) && !$request->user()->isAdmin()) {
                 abort(403);
             }
@@ -152,7 +153,8 @@ class SubjectController extends Controller
 
     public function add_students(Request $request, Subject $subject)
     {
-        Gate::authorize('add_students', Subject::class);
+        // Gate::authorize('add_students', Subject:class);
+        Gate::authorize('add_students', $subject);
 
         $request->validate([
             'students' => ['required', 'regex:/^(\d+,)*\d+$/'],

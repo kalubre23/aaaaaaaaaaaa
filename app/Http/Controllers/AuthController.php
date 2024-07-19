@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
@@ -22,8 +24,19 @@ class AuthController extends Controller
             $token = $user->createToken('spa', ["app:$role"])->plainTextToken;
             $request->session()->regenerate();
 
+            $child = null;
+            $subject = null;
+
+            if($user['role_id']==2){
+                $child = User::where('parent_id', $user->id)->get();;
+            } elseif ($user['role_id'] == 3) {
+                $subject = Subject::where('teacher_id', $user->id)->get();
+            }
+
             return response()->json([
                 'user' => $user,
+                'child' => $child,
+                'subject' => $subject,
                 'token' => $token,
             ])->withCookie('token', $token, config('sanctum.expiration'), null, null, false, true);
         }
