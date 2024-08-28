@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage = () => {
+const LoginPage = ({returnRole}) => {
     const [userData, setUserData] = useState({
         username: "",
         password: "",
@@ -35,8 +35,6 @@ const LoginPage = () => {
         });
     }
 
-    //let navigate = useNavigate();
-
     function handleLogin(e) {
         e.preventDefault();
         axios.post('http://localhost:8001/auth/login', {
@@ -53,10 +51,10 @@ const LoginPage = () => {
             }
         )
             .then(response => {
-                console.log('Response:', response.data);
-                if(response.data.user.role.name === "Teacher"){
-                    navigate("/");
-                }
+                console.log(response.data.user);
+                returnRole(response.data.user.role.name);
+                navigate("/");
+                
             })
             .catch(error => {
                 console.error('Error in POST request:', error);

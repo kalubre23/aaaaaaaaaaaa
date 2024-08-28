@@ -1,18 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
-import axios from 'axios';
+import NavStudentParent from './components/NavStudentParent';
 
 function App() {
+  const [role, setRole] = useState();
+
+  function returnRole(rolee){
+    console.log(rolee);
+    setRole(rolee);
+  }
   
   return (
     <BrowserRouter className="App">
       <Routes>
-        <Route path='/login' element= { <LoginPage/> }/>
-        {/* <Route path='/register' element = { <RegisterPage/> }/>
-        <Route path='/' element = { <NavBar token = { token }/> }> 
-          <Route path='posts' element = { <PostsPage/> }/>
-        </Route> */}
+        <Route path='/login' element= { <LoginPage returnRole={returnRole}/> }/>
+        <Route path='/' element = { <NavStudentParent role={role}/> }/>
       </Routes>
     </BrowserRouter>
   );
