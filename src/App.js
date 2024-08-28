@@ -2,20 +2,22 @@ import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import NavStudentParent from './components/NavStudentParent';
+import Grades from './components/Grades';
 
 function App() {
-  const [role, setRole] = useState();
+  const [user, setUser] = useState();
 
-  function returnRole(rolee){
-    console.log(rolee);
-    setRole(rolee);
+  function returnUser(userData){
+    setUser(userData);
   }
   
   return (
     <BrowserRouter className="App">
       <Routes>
-        <Route path='/login' element= { <LoginPage returnRole={returnRole}/> }/>
-        <Route path='/' element = { <NavStudentParent role={role}/> }/>
+        <Route path='/login' element= { <LoginPage returnUser={returnUser}/> }/>
+        <Route path='/' element = { <NavStudentParent/> }>
+          <Route path='grades' element={ <Grades user={user}/>}></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

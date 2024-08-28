@@ -1,7 +1,9 @@
-import React from 'react'
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 
-const NavStudentParent = ({role}) => {
+const NavStudentParent = () => {
   return (
+    <div>
       <ul className="nav justify-content-between" style={{ paddingTop: "20px", paddingBottom: "20px", borderBottom: "2px solid #c1c1bf", backgroundColor: "#953eec", fontSize: "1.25rem" }}>
           <li className="nav-item" style={{
               color: "#FFFFFF",
@@ -15,14 +17,19 @@ const NavStudentParent = ({role}) => {
           </li>
         <ul className="nav justify-content-end">
               <li className="nav-item" style={{ marginRight: "15px" }}>
-                  <a className="nav-link active" style={{ color: "#FFFFFF"}} aria-current="page" href="#">My grades</a>
+                  <a className="nav-link active" style={{ color: "#FFFFFF"}} aria-current="page" href="/grades">My grades</a>
             </li>
               
               <li className="nav-item" style={{ marginRight: "15px"}}>
-                  <a className="nav-link" href="#" style={{ color: "#FFFFFF"}}>Profile</a>
+                  <a className="nav-link" href="/profile" style={{ color: "#FFFFFF"}}>Profile</a>
             </li>
+          <li className="nav-item" style={{ marginRight: "15px" }}>
+            <a className="nav-link" href="/logout" style={{ color: "#adabac" }}>Logout</a>
+          </li>
         </ul>
       </ul>
+      <Outlet/>
+    </div>
   )
 }
 

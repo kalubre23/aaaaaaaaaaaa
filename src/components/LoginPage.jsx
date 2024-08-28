@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage = ({returnRole}) => {
+const LoginPage = ({returnUser}) => {
     const [userData, setUserData] = useState({
         username: "",
         password: "",
@@ -52,8 +52,8 @@ const LoginPage = ({returnRole}) => {
         )
             .then(response => {
                 console.log(response.data.user);
-                returnRole(response.data.user.role.name);
-                navigate("/");
+                returnUser(response.data.user);
+                navigate("/grades");
                 
             })
             .catch(error => {
