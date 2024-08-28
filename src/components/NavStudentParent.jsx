@@ -1,7 +1,37 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const NavStudentParent = () => {
+
+  let navigate = useNavigate();
+
+  function getCookie(name) {
+    var xsrf = name.split("XSRF-TOKEN=")[1];
+    return decodeURIComponent(xsrf);
+  }
+
+  const handleLogout = () => {
+    axios.post('http://localhost:8001/auth/logout', {}, 
+      {
+        headers: {
+          'X-XSRF-TOKEN': getCookie(document.cookie),
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        withCredentials: true
+      }
+    )
+      .then(response => {
+        window.sessionStorage.clear();
+        window.localStorage.clear();
+        navigate("/login");
+      })
+      .catch(error => {
+        console.error('Error during logout:', error);
+      });
+  };
+
   return (
     <div>
       <ul className="nav justify-content-between" style={{ paddingTop: "20px", paddingBottom: "20px", borderBottom: "2px solid #c1c1bf", backgroundColor: "#953eec", fontSize: "1.25rem" }}>
@@ -24,7 +54,7 @@ const NavStudentParent = () => {
                   <a className="nav-link" href="/profile" style={{ color: "#FFFFFF"}}>Profile</a>
             </li>
           <li className="nav-item" style={{ marginRight: "15px" }}>
-            <a className="nav-link" href="/logout" style={{ color: "#adabac" }}>Logout</a>
+            <button className="nav-link" onClick={handleLogout} style={{ color: "#adabac" }}>Logout</button>
           </li>
         </ul>
       </ul>

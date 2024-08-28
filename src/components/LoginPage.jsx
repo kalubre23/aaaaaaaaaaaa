@@ -52,7 +52,11 @@ const LoginPage = ({returnUser}) => {
         )
             .then(response => {
                 console.log(response.data.user);
-                returnUser(response.data.user);
+                window.sessionStorage.setItem("username", response.data.user.username);
+                window.sessionStorage.setItem("name", response.data.user.name);
+                window.sessionStorage.setItem("surname", response.data.user.surname);
+                window.sessionStorage.setItem("email", response.data.user.email);
+                window.sessionStorage.setItem("role", response.data.user.role.name);
                 navigate("/grades");
                 
             })

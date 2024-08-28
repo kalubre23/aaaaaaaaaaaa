@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios';
 import OneGrade from './OneGrade';
 
-const Grades = ({user}) => {
+const Grades = () => {
     const [grades, setGrades] = useState(null);
 
     useEffect(() => {
@@ -18,10 +18,11 @@ const Grades = ({user}) => {
             });
     }, []);
 
+    let name = window.sessionStorage.getItem("name")
 
   return (
       <div className='mt-1 px-2'>
-          <h2><span className="badge bg-secondary"> {user.name}</span> 's grades </h2>
+          <h2><span className="badge bg-secondary"> {name}</span> 's grades </h2>
       <table className="table table-striped table-hover">
           <thead>
               <tr>
