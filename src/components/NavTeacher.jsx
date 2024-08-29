@@ -59,7 +59,7 @@ const NavTeacher = ({setRole}) => {
                   </li>
 
                   <li className="nav-item" style={{ marginRight: "15px" }}>
-                      <a className="nav-link" href="/profile" style={{ color: "#FFFFFF" }}>Grade a student</a>
+                      <a className="nav-link" href="/students" style={{ color: "#FFFFFF" }}>Grade a student</a>
                   </li>
                   <li className="nav-item" style={{ marginRight: "15px" }}>
                       <a className="nav-link" href="/profile" style={{ color: "#FFFFFF" }}>Profile</a>

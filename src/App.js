@@ -6,6 +6,7 @@ import Grades from './components/Grades';
 import ProfilePage from './components/ProfilePage';
 import NavTeacher from './components/NavTeacher';
 import StudentGrades from './components/StudentGrades';
+import Students from './components/Students';
 
 function App() {
   // const [user, setUser] = useState();
@@ -85,6 +86,7 @@ function App() {
             <Route path="/" element={<NavTeacher setRole={setRole}/>}>
               <Route path="student-grades" element={<StudentGrades />} />
               <Route path="profile" element={<ProfilePage />} />
+              <Route path="students" element={<Students />} />
               <Route path="*" element={<Navigate to="/profile" />} />
             </Route>
           </>
