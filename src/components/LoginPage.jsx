@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage = ({returnUser}) => {
+const LoginPage = ({setRole}) => {
     const [userData, setUserData] = useState({
         username: "",
         password: "",
@@ -64,7 +64,18 @@ const LoginPage = ({returnUser}) => {
                     window.sessionStorage.setItem("child_surname", response.data.child[0].surname);
                     window.sessionStorage.setItem("child_email", response.data.child[0].email);
                 }
-                navigate("/grades");
+                if(window.sessionStorage.getItem("role")==="Teacher"){
+                    setRole("Teacher");
+                    navigate("/");
+                } else{
+                    if (window.sessionStorage.getItem("role") === "Parent"){
+                        setRole("Parent");
+                    }
+                    if (window.sessionStorage.getItem("role") === "Student") {
+                        setRole("Student");
+                    }
+                    navigate("/grades");
+                }
                 
             })
             .catch(error => {

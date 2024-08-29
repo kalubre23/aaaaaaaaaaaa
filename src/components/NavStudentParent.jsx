@@ -1,10 +1,17 @@
-import React from 'react';
+import {useEffect} from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-const NavStudentParent = () => {
+const NavStudentParent = ({setRole}) => {
 
   let navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.sessionStorage.length === 0) {
+      setRole(null);
+      navigate('/login');
+    }
+  }, []);
 
   function getCookie(name) {
     var xsrf = name.split("XSRF-TOKEN=")[1];
@@ -25,6 +32,7 @@ const NavStudentParent = () => {
       .then(response => {
         window.sessionStorage.clear();
         window.localStorage.clear();
+        setRole(null);
         navigate("/login");
       })
       .catch(error => {
