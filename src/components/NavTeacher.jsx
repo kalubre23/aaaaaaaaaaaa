@@ -1,10 +1,45 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import {React, useEffect} from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
+import axios from 'axios';
 
-const NavTeacher = () => {
-    const handleLogout =  (params) => {
-        
+const NavTeacher = ({setRole}) => {
+    
+
+    let navigate = useNavigate();
+
+    useEffect(() => {
+        if (window.sessionStorage.length === 0) {
+            setRole(null);
+            navigate('/login');
+        }
+    }, []);
+
+    function getCookie(name) {
+        var xsrf = name.split("XSRF-TOKEN=")[1];
+        return decodeURIComponent(xsrf);
     }
+
+    const handleLogout = () => {
+        axios.post('http://localhost:8001/auth/logout', {},
+            {
+                headers: {
+                    'X-XSRF-TOKEN': getCookie(document.cookie),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                withCredentials: true
+            }
+        )
+            .then(response => {
+                window.sessionStorage.clear();
+                window.localStorage.clear();
+                setRole(null);
+                navigate("/login");
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+            });
+    };
   return (
     <div>
           <ul className="nav justify-content-between" style={{ paddingTop: "20px", paddingBottom: "20px", borderBottom: "2px solid #c1c1bf", backgroundColor: "#953eec", fontSize: "1.25rem" }}>
@@ -20,14 +55,11 @@ const NavTeacher = () => {
               </li>
               <ul className="nav justify-content-end">
                   <li className="nav-item" style={{ marginRight: "15px" }}>
-                      <a className="nav-link active" style={{ color: "#FFFFFF" }} aria-current="page" href="/grades">All grades</a>
+                      <a className="nav-link active" style={{ color: "#FFFFFF" }} href="/student-grades" aria-current="page">All grades</a>
                   </li>
 
                   <li className="nav-item" style={{ marginRight: "15px" }}>
                       <a className="nav-link" href="/profile" style={{ color: "#FFFFFF" }}>Grade a student</a>
-                  </li>
-                  <li className="nav-item" style={{ marginRight: "15px" }}>
-                      <a className="nav-link" href="/profile" style={{ color: "#FFFFFF" }}>Subject info</a>
                   </li>
                   <li className="nav-item" style={{ marginRight: "15px" }}>
                       <a className="nav-link" href="/profile" style={{ color: "#FFFFFF" }}>Profile</a>

@@ -64,6 +64,10 @@ const LoginPage = ({setRole}) => {
                     window.sessionStorage.setItem("child_surname", response.data.child[0].surname);
                     window.sessionStorage.setItem("child_email", response.data.child[0].email);
                 }
+                if (response.data.subject != null) {
+                    window.sessionStorage.setItem("subject_id", response.data.subject[0].id);
+                    window.sessionStorage.setItem("subject_name", response.data.subject[0].name);
+                }
                 if(window.sessionStorage.getItem("role")==="Teacher"){
                     setRole("Teacher");
                     navigate("/");

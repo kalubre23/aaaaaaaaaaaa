@@ -1,12 +1,23 @@
 import React from 'react'
 
-const OneGrade = ({grade, index}) => {
+const OneGrade = ({isStudentGrades, grade, index}) => {
   return (
-      <tr>
+    <>
+    {
+      isStudentGrades ?
+      (<tr>
+        <th scope="row">{index + 1}</th>
+        <td>{grade.student.name}</td>
+        <td>{grade.student.surname}</td>
+        <td>{grade.value}</td>
+      </tr>) :
+        (<tr>
           <th scope="row">{index + 1}</th>
           <td>{grade.subject.name}</td>
           <td>{grade.value}</td>
-      </tr>
+        </tr>)
+    } 
+    </>
   )
 }
 

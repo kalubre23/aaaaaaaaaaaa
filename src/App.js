@@ -5,7 +5,7 @@ import NavStudentParent from './components/NavStudentParent';
 import Grades from './components/Grades';
 import ProfilePage from './components/ProfilePage';
 import NavTeacher from './components/NavTeacher';
-import Subject from './components/Subject';
+import StudentGrades from './components/StudentGrades';
 
 function App() {
   // const [user, setUser] = useState();
@@ -82,8 +82,8 @@ function App() {
         ) : role === 'Teacher' ? (
           <>
             {/* Teacher routes */}
-            <Route path="/" element={<NavTeacher />}>
-              <Route path="subject" element={<Subject />} />
+            <Route path="/" element={<NavTeacher setRole={setRole}/>}>
+              <Route path="student-grades" element={<StudentGrades />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/profile" />} />
             </Route>

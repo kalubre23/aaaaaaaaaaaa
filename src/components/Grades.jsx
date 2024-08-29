@@ -35,7 +35,7 @@ const Grades = () => {
           <tbody>
             {
                 grades==null ? <p>No grades yet</p> : grades.map((grade, index) => (
-                    <OneGrade grade={grade} index={index} key={grade.id}/>
+                    <OneGrade isStudentGrades={false} grade={grade} index={index} key={grade.id}/>
                 ))
             }
           </tbody>
