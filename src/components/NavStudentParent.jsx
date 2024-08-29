@@ -47,7 +47,7 @@ const NavStudentParent = () => {
           </li>
         <ul className="nav justify-content-end">
               <li className="nav-item" style={{ marginRight: "15px" }}>
-                  <a className="nav-link active" style={{ color: "#FFFFFF"}} aria-current="page" href="/grades">My grades</a>
+                  <a className="nav-link active" style={{ color: "#FFFFFF"}} aria-current="page" href="/grades">{window.sessionStorage.getItem("role")==="Parent" ? window.sessionStorage.getItem("child_name")+"'s grades" : "My grades"}</a>
             </li>
               
               <li className="nav-item" style={{ marginRight: "15px"}}>

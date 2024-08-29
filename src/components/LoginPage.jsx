@@ -52,11 +52,18 @@ const LoginPage = ({returnUser}) => {
         )
             .then(response => {
                 console.log(response.data.user);
+                console.log(response.data.child);
                 window.sessionStorage.setItem("username", response.data.user.username);
                 window.sessionStorage.setItem("name", response.data.user.name);
                 window.sessionStorage.setItem("surname", response.data.user.surname);
                 window.sessionStorage.setItem("email", response.data.user.email);
                 window.sessionStorage.setItem("role", response.data.user.role.name);
+                if(response.data.child!=null){
+                    window.sessionStorage.setItem("child_username", response.data.child[0].username);
+                    window.sessionStorage.setItem("child_name", response.data.child[0].name);
+                    window.sessionStorage.setItem("child_surname", response.data.child[0].surname);
+                    window.sessionStorage.setItem("child_email", response.data.child[0].email);
+                }
                 navigate("/grades");
                 
             })

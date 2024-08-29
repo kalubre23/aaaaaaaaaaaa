@@ -25,8 +25,33 @@ const ProfilePage = () => {
                     <th scope="row">Role:</th>
                     <td>{window.sessionStorage.getItem("role")}</td>
                   </tr>
-            </tbody>
-        </table>
+                  {
+                    window.sessionStorage.getItem("role")==="Parent" ? 
+                        (<>
+                        <tr>
+                            <th scope="row">Child's Name:</th>
+                            <td>{window.sessionStorage.getItem("child_name")}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Child's Surname:</th>
+                                  <td>{window.sessionStorage.getItem("child_surname")}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Child's Username:</th>
+                            <td>{window.sessionStorage.getItem("child_username")}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Child's Email:</th>
+                            <td>{window.sessionStorage.getItem("child_email")}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Child's Role:</th>
+                            <td>Student</td>
+                              </tr> </>) : <></>
+                    
+                }
+                </tbody>
+          </table>
     </div>
   )
 }

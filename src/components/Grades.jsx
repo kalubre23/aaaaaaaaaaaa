@@ -22,7 +22,8 @@ const Grades = () => {
 
   return (
       <div className='mt-1 px-2'>
-          <h2><span className="badge bg-secondary"> {name}</span> 's grades </h2>
+          {window.sessionStorage.getItem("role") === "Parent" ? <h2><span className="badge bg-secondary"> {window.sessionStorage.getItem("child_name")}</span> 's grades </h2> : 
+              <h2><span className="badge bg-secondary"> {name}</span> 's grades </h2>}
       <table className="table table-striped table-hover">
           <thead>
               <tr>
