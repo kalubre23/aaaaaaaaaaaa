@@ -1,30 +1,26 @@
 import axios from 'axios';
-import {React,useState } from 'react'
+import {React,useState, useRef } from 'react'
 import Spinner from './Spinner';
 
-const OneStudent = ({studentMark, setStudentsMarks}) => {
-    const [grade, setGrade] = useState();
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleGradeChange = (e) => {
-        console.log(e.target.value)
-        setGrade(e.target.value);
-    };
-
-    let success = null;
+const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
+    const [grade, setGrade] = useState(studentMark.mark);
+    
+    const inputRef = useRef(null);
 
     function getCookie(name) {
         var xsrf = name.split("XSRF-TOKEN=")[1];
         return decodeURIComponent(xsrf);
     }
 
+    
+
     const handleInputGrade = () => {
-        setIsLoading(true);
+        let inputGrade = inputRef.current.value;
         //zavrsi poziv od baze
         if(studentMark.mark == null) {
             //post
             axios.post(`http://localhost:8001/api/marks/${window.sessionStorage.getItem("subject_id")}/${studentMark.id}`, {
-                "value": grade
+                "value": inputGrade
             }, {
                 headers: {
                     'X-XSRF-TOKEN': getCookie(document.cookie),
@@ -34,29 +30,30 @@ const OneStudent = ({studentMark, setStudentsMarks}) => {
                 withCredentials: true,
             })
                 .then(response => {
+                    inputRef.current.value = "";
                     console.log(response);
-                    if (response.message === "Successfully added a mark."){
-                        studentMark.mark = grade;
-                        setGrade(grade);
-                        success = true;
-                    }
+                    studentMark.mark = inputGrade;
+                    setGrade(inputGrade);
+                    setModalMessage('Succesfully added a grade!');
+                    setShowModal(true);
+                
                 })
                 .catch(error => {
                     console.error('Error while grading a student!:', error);
-                    success=false;
+                    setModalMessage(error.message);
+                    setShowModal(true);
                 });
         } else {
             //put
         }
-        setIsLoading(false);
     };
 
   return (
       <div className="card mt-1">
           <div className="card-body">
               <h5 className="card-title">{studentMark.name+" "+studentMark.surname} </h5>
-              <h4 className="card-title">Grade: {studentMark.mark == null ? "Not graded" : studentMark.mark}</h4>
-              <label className="label mr-1" for="mark">{studentMark.mark == null ? "Grade student" : "Update grade"}</label>
+              <h4 className="card-title">Grade: {grade == null ? "Not graded" : grade}</h4>
+              <label className="label mr-1" for="mark">{grade == null ? "Grade student" : "Update grade"}</label>
               <div className="d-flex flex-row">
                 <input
                     className='form-control pe-2 w-25'
@@ -65,18 +62,19 @@ const OneStudent = ({studentMark, setStudentsMarks}) => {
                     max="5" 
                     type="number"
                     placeholder="Enter a number from 1 to 5"
-                    onChange={(e) => handleGradeChange(e)}
-                    disabled={isLoading}
+                    ref={inputRef}
                 />
                 <button onClick={handleInputGrade} className="btn btn-primary">
-                      {isLoading ? <Spinner/> : (studentMark.mark == null ? "Grade" : "Update")}
+                      {grade == null ? "Grade" : "Update"}
                 </button>
-                  {success === null ? <></> : success === true ? <p className="text-success">Successfully added a grade. </p> : 
-                      <p className="text-danger"> Error while grading a student ! </p>}
+
               </div>
           </div>
+            
       </div>
   )
 }
+
+
 
 export default OneStudent;
