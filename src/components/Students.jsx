@@ -6,7 +6,7 @@ const Students = () => {
     const [studentsMarks, setStudentsMarks] = useState(null);
 
     useEffect(() => {
-        axios.get('http://localhost:8001/api/students', {
+        axios.get(`http://localhost:8001/api/students/${window.sessionStorage.getItem("subject_id")}`, {
             withCredentials: true,
         })
             .then(response => {

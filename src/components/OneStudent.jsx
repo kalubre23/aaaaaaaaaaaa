@@ -13,6 +13,11 @@ const OneStudent = ({studentMark, setStudentsMarks}) => {
 
     let success = null;
 
+    function getCookie(name) {
+        var xsrf = name.split("XSRF-TOKEN=")[1];
+        return decodeURIComponent(xsrf);
+    }
+
     const handleInputGrade = () => {
         setIsLoading(true);
         //zavrsi poziv od baze
@@ -21,6 +26,11 @@ const OneStudent = ({studentMark, setStudentsMarks}) => {
             axios.post(`http://localhost:8001/api/marks/${window.sessionStorage.getItem("subject_id")}/${studentMark.id}`, {
                 "value": grade
             }, {
+                headers: {
+                    'X-XSRF-TOKEN': getCookie(document.cookie),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
                 withCredentials: true,
             })
                 .then(response => {
@@ -61,7 +71,7 @@ const OneStudent = ({studentMark, setStudentsMarks}) => {
                 <button onClick={handleInputGrade} className="btn btn-primary">
                       {isLoading ? <Spinner/> : (studentMark.mark == null ? "Grade" : "Update")}
                 </button>
-                  {success === null ? <></> : success === true ? <p className="text-success">Successfully added a mark. </p> : 
+                  {success === null ? <></> : success === true ? <p className="text-success">Successfully added a grade. </p> : 
                       <p className="text-danger"> Error while grading a student ! </p>}
               </div>
           </div>

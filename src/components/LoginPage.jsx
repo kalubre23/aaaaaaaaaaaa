@@ -16,7 +16,7 @@ const LoginPage = ({setRole}) => {
             withCredentials: true, 
         })
             .then(response => {
-                console.log(getCookie(document.cookie))
+                console.log(getCookie(document.cookie));
             })
             .catch(error => {
                 console.error('Error fetching CSRF token:', error);
