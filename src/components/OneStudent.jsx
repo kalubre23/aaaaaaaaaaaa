@@ -45,7 +45,7 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
                 });
         } else {
             //put
-            axios.put(`http://localhost:8001/api/marks/${studentMark.id}`, {
+            axios.put(`http://localhost:8001/api/marks/${studentMark.mark_id}`, {
                 "value": inputGrade
             }, {
                 headers: {
@@ -72,6 +72,31 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
         }
     };
 
+    const handleDeleteGrade = () => { 
+        axios.delete(`http://localhost:8001/api/marks/${studentMark.mark_id}`, 
+                {
+                headers: {
+                    'X-XSRF-TOKEN': getCookie(document.cookie),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                withCredentials: true,
+            })
+                .then(response => {
+                    inputRef.current.value = "";
+                    console.log(response);
+                    studentMark.mark = null;
+                    setGrade(null);
+                    setModalMessage('Succesfully deleted grade!');
+                    setShowModal(true);
+                })
+                .catch(error => {
+                    console.error('Error while deleting grade !: ', error);
+                    setModalMessage("Error while deleting grade!\n", error.message);
+                    setShowModal(true);
+                });
+     }
+
   return (
       <div className="card mt-1">
           <div className="card-body">
@@ -88,10 +113,13 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
                     placeholder="Enter a number from 1 to 5"
                     ref={inputRef}
                 />
-                <button onClick={handleInputGrade} className="btn btn-primary">
+                <button onClick={handleInputGrade} className="btn btn-primary ms-1">
                       {grade == null ? "Grade" : "Update"}
                 </button>
-
+                  {grade == null ? <></> : 
+                  <button onClick={handleDeleteGrade} className="btn btn-danger ms-1">
+                      Delete grade
+                  </button>}
               </div>
           </div>
             
