@@ -70,7 +70,7 @@ const LoginPage = ({setRole}) => {
                 }
                 if(window.sessionStorage.getItem("role")==="Teacher"){
                     setRole("Teacher");
-                    navigate("/");
+                    navigate("/student-grades");
                 } else{
                     if (window.sessionStorage.getItem("role") === "Parent"){
                         setRole("Parent");

@@ -19,7 +19,7 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
         //zavrsi poziv od baze
         if(studentMark.mark == null) {
             //post
-            axios.post(`http://localhost:8001/api/marks/${window.sessionStorage.getItem("subject_id")}/${studentMark.id}`, {
+            axios.post(`http://localhost:8001/api/marks/${window.sessionStorage.getItem("subject_id")}/${studentMark.user_id}`, {
                 "value": inputGrade
             }, {
                 headers: {
@@ -45,6 +45,30 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
                 });
         } else {
             //put
+            axios.put(`http://localhost:8001/api/marks/${studentMark.id}`, {
+                "value": inputGrade
+            }, {
+                headers: {
+                    'X-XSRF-TOKEN': getCookie(document.cookie),
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                withCredentials: true,
+            })
+                .then(response => {
+                    inputRef.current.value = "";
+                    console.log(response);
+                    studentMark.mark = inputGrade;
+                    setGrade(inputGrade);
+                    setModalMessage('Succesfully updated a grade!');
+                    setShowModal(true);
+
+                })
+                .catch(error => {
+                    console.error('Error while updating a grade!:', error);
+                    setModalMessage(error.message);
+                    setShowModal(true);
+                });
         }
     };
 
