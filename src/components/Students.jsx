@@ -1,11 +1,14 @@
 import {React, useState, useEffect} from 'react'
 import axios from 'axios';
 import OneStudent from './OneStudent';
+import Spinner from './Spinner';
 
 const Students = () => {
     const [studentsMarks, setStudentsMarks] = useState(null);
     const [modalMessage, setModalMessage] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [loading, setLoading] = useState(true);
+
 
     const closeModal = () => {
         setShowModal(false); // Close modal
@@ -18,12 +21,17 @@ const Students = () => {
             .then(response => {
                 console.log(response);
                 setStudentsMarks(response.data);
+                setLoading(false);
             })
             .catch(error => {
                 console.error('Error while getting marks!:', error);
+                setLoading(false);
             });
     }, []);
 
+    if (loading) {
+        return <Spinner />;
+    }
 
   return (
 

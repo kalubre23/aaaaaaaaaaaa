@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
-import NavStudentParent from './components/NavStudentParent';
-import Grades from './components/Grades';
+// import NavStudentParent from './components/NavStudentParent';
+// import Grades from './components/Grades';
 import ProfilePage from './components/ProfilePage';
-import NavTeacher from './components/NavTeacher';
-import StudentGrades from './components/StudentGrades';
+//import NavTeacher from './components/NavTeacher';
+//import StudentGrades from './components/StudentGrades';
 import Students from './components/Students';
+import NavBar from './components/NavBar';
+import Grades from './components/Grades';
+
 
 function App() {
   // const [user, setUser] = useState();
@@ -83,8 +86,8 @@ function App() {
         ) : role === 'Teacher' ? (
           <>
             {/* Teacher routes */}
-            <Route path="/" element={<NavTeacher setRole={setRole}/>}>
-              <Route path="student-grades" element={<StudentGrades />} />
+            <Route path="/" element={<NavBar setRole={setRole} isTeacher={true}/>}>
+              <Route path="student-grades" element={<Grades isTeacher={true} />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="students" element={<Students />} />
               <Route path="*" element={<Navigate to="/profile" />} />
@@ -93,8 +96,8 @@ function App() {
         ) : (
           <>
             {/* Student/Parent routes */}
-            <Route path="/" element={<NavStudentParent setRole={setRole}/>}>
-              <Route path="grades" element={<Grades />} />
+            <Route path="/" element={<NavBar setRole={setRole} isTeacher={false}/>}>
+              <Route path="grades" element={<Grades isTeacher={false}/>} />
               <Route path="profile" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/profile" />} />
             </Route>

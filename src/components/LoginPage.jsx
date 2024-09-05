@@ -9,6 +9,8 @@ const LoginPage = ({setRole}) => {
         password: "",
     });
 
+    const [error, setError] = useState(false);
+
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -84,6 +86,7 @@ const LoginPage = ({setRole}) => {
             })
             .catch(error => {
                 console.error('Error in POST request:', error);
+                setError(true);
             });
         
     }
@@ -133,6 +136,11 @@ const LoginPage = ({setRole}) => {
                                     Password
                                 </label>
                             </div>
+                            {
+                                error ? <div className="text-danger">
+                                    <p>Username and password are incorrect! Try again.</p>
+                                </div> : <></>
+                            }
 
                             <div className="text-center text-lg-start mt-4 pt-2">
                                 <button

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import {React,useState, useRef } from 'react'
-import Spinner from './Spinner';
 
 const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
     const [grade, setGrade] = useState(studentMark.mark);

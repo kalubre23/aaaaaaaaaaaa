@@ -1,10 +1,10 @@
 import React from 'react'
 
-const OneGrade = ({isStudentGrades, grade, index}) => {
+const OneGrade = ({isTeacher, grade, index}) => {
   return (
     <>
     {
-      isStudentGrades ?
+        isTeacher ?
       (<tr>
         <th scope="row">{index + 1}</th>
         <td>{grade.student.name}</td>
