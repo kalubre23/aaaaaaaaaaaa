@@ -21,7 +21,7 @@ use Throwable;
 
 class UserController extends Controller
 {
-    public function listStudents($subject_id){
+    public function listStudents(Request $request, $subject_id){
         Gate::authorize('viewAny', User::class);
 
         try{
@@ -31,6 +31,7 @@ class UserController extends Controller
             // // Query the User model
             // $users = User::where('role_id', 1)
             //     ->paginate($perPage);
+            $perPage = empty($request->perPage) ? 5 : $request->perPage;
 
             if(auth()->user()->isTeacher()){
                 $subject = Subject::where('teacher_id', auth()->user()->id)->first();
@@ -57,7 +58,7 @@ class UserController extends Controller
             //return response()->json($students);
 
             $results = DB::table('subject_students')
-            ->select('subject_students.id', 'marks.id AS mark_id', 'users.id AS user_id', 'users.name', 'users.surname', 'marks.value')
+            ->select('subject_students.id', 'marks.id AS mark_id', 'users.id AS user_id', 'users.name AS name', 'users.surname AS surname', 'marks.value AS mark')
             ->leftJoin('marks', function ($join) {
                 $join->on('subject_students.student_id', '=', 'marks.student_id')
                 ->on('subject_students.subject_id', '=', 'marks.subject_id');
@@ -65,20 +66,20 @@ class UserController extends Controller
                 ->leftJoin('users', 'subject_students.student_id', '=', 'users.id')
                 ->where('subject_students.subject_id', '=', $subject_id)
                 ->where('users.role_id', '=', 1)
-                ->get();
+                ->paginate($perPage)->withQueryString();
 
-            $students = $results->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'mark_id' => $item->mark_id,
-                    'user_id' => $item->user_id,
-                    'name' => $item->name,
-                    'surname' => $item->surname,
-                    'mark' => $item->value ? json_decode($item->value) : null // Include the mark or null
-                ];
-            });
+            // $students = $results->getCollection()->map(function ($item) {
+            //     return [
+            //         'id' => $item->id,
+            //         'mark_id' => $item->mark_id,
+            //         'user_id' => $item->user_id,
+            //         'name' => $item->name,
+            //         'surname' => $item->surname,
+            //         'mark' => $item->value ? json_decode($item->value) : null // Include the mark or null
+            //     ];
+            // });
 
-            return response()->json($students);
+            return response()->json($results);
         } catch (Throwable $th) {
             Log::channel('err')->error(time() . " There was an error UserController@listStudents " . $th->getMessage());
 

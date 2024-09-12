@@ -16,7 +16,7 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
     const handleInputGrade = () => {
         let inputGrade = inputRef.current.value;
         //zavrsi poziv od baze
-        if(studentMark.mark == null) {
+        if(studentMark.mark_id == null) {
             //post
             axios.post(`http://localhost:8001/api/marks/${window.sessionStorage.getItem("subject_id")}/${studentMark.user_id}`, {
                 "value": inputGrade
@@ -84,6 +84,7 @@ const OneStudent = ({ studentMark, setModalMessage, setShowModal }) => {
                 .then(response => {
                     inputRef.current.value = "";
                     console.log(response);
+                    studentMark.mark_id = null;
                     studentMark.mark = null;
                     setGrade(null);
                     setModalMessage('Succesfully deleted grade!');
