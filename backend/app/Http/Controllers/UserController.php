@@ -25,12 +25,7 @@ class UserController extends Controller
         Gate::authorize('viewAny', User::class);
 
         try{
-            // // Number of users per page
-            // $perPage = $request->input('perPage', 10); // Default to 10 if not provided
-
-            // // Query the User model
-            // $users = User::where('role_id', 1)
-            //     ->paginate($perPage);
+            
             $perPage = empty($request->perPage) ? 5 : $request->perPage;
 
             if(auth()->user()->isTeacher()){
@@ -42,22 +37,7 @@ class UserController extends Controller
                 }
             }
 
-
-            // $rawData = DB::table('users')
-            //     ->join('subject_students', 'users.id', '=', 'subject_students.student_id')
-            //     ->where('users.role_id', 1) // Filter for students
-            //     ->where('subject_students.subject_id', $subject->id) // Filter for specific subject
-            //     ->select('users.*') // Select all columns from the users table
-            //     ->get();
-
-            // $students = $rawData->map(function ($item) {
-            //     return User::hydrate([$item])->first();
-            // });
-
-            // return UserResource::collection($students);
-            //return response()->json($students);
-
-            $results = DB::table('subject_students')
+            $query = DB::table('subject_students')
             ->select('subject_students.id', 'marks.id AS mark_id', 'users.id AS user_id', 'users.name AS name', 'users.surname AS surname', 'marks.value AS mark')
             ->leftJoin('marks', function ($join) {
                 $join->on('subject_students.student_id', '=', 'marks.student_id')
@@ -65,19 +45,20 @@ class UserController extends Controller
             })
                 ->leftJoin('users', 'subject_students.student_id', '=', 'users.id')
                 ->where('subject_students.subject_id', '=', $subject_id)
-                ->where('users.role_id', '=', 1)
-                ->paginate($perPage)->withQueryString();
+                ->where('users.role_id', '=', 1);
 
-            // $students = $results->getCollection()->map(function ($item) {
-            //     return [
-            //         'id' => $item->id,
-            //         'mark_id' => $item->mark_id,
-            //         'user_id' => $item->user_id,
-            //         'name' => $item->name,
-            //         'surname' => $item->surname,
-            //         'mark' => $item->value ? json_decode($item->value) : null // Include the mark or null
-            //     ];
-            // });
+            //ako ima search param u get onda pretrazi
+            if ($request->has('search')) {
+                $search = $request->input('search');
+                $query->where(function ($query) use ($search) {
+                    $query->whereRaw("LOWER(name) LIKE ?", ['%' . $search . '%'])
+                    ->orWhereRaw("LOWER(surname) LIKE ?", ['%' . $search . '%'])
+                    ->orWhereRaw("CONCAT(name, ' ', surname) LIKE ?", ['%' . $search . '%'])
+                    ->orWhereRaw("CONCAT(surname, ' ', name) LIKE ?", ['%' . $search . '%']);
+                });
+            }
+
+            $results = $query->paginate($perPage);
 
             return response()->json($results);
         } catch (Throwable $th) {
