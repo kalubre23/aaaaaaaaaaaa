@@ -2,6 +2,7 @@ import {React, useState, useEffect} from 'react'
 import axios from 'axios';
 import OneStudent from './OneStudent';
 import Spinner from './Spinner';
+import { BsSearch } from "react-icons/bs";
 
 const Students = () => {
     const [studentsMarks, setStudentsMarks] = useState(null);
@@ -10,6 +11,9 @@ const Students = () => {
     const [loading, setLoading] = useState(true);
     const [paginationLinks, setPaginationLinks] = useState([]);
 
+    const [searchTerm, setSearchTerm] = useState('');
+
+
     const subjectId = window.sessionStorage.getItem("subject_id");
 
     const closeModal = () => {
@@ -17,27 +21,28 @@ const Students = () => {
     };
 
     useEffect(() => {
-        axios.get(`http://localhost:8001/api/students/${subjectId}`, {
-            withCredentials: true,
-        })
-            .then(response => {
-                console.log(response);
-                setStudentsMarks(response.data.data);
-                // setPaginationLinks({
-                //     "current_page": response.data.current_page,
-                //     "first_page_url": response.data.first_page_url,
-                //     "from": response.data.from,
-                //     "last_page": response.data.last_page,
-                //     "prev_page_url": response.data.prev_page_url,
-                //     "links": response.data.links
-                // });
-                setPaginationLinks(response.data.links);
-                console.log(paginationLinks);
-            })
-            .catch(error => {
-                console.error('Error while getting marks!:', error);
-            })
-            .finally(() => setLoading(false));;
+        // axios.get(`http://localhost:8001/api/students/${subjectId}`, {
+        //     withCredentials: true,
+        // })
+        //     .then(response => {
+        //         console.log(response);
+        //         setStudentsMarks(response.data.data);
+        //         // setPaginationLinks({
+        //         //     "current_page": response.data.current_page,
+        //         //     "first_page_url": response.data.first_page_url,
+        //         //     "from": response.data.from,
+        //         //     "last_page": response.data.last_page,
+        //         //     "prev_page_url": response.data.prev_page_url,
+        //         //     "links": response.data.links
+        //         // });
+        //         setPaginationLinks(response.data.links);
+        //         console.log(paginationLinks);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error while getting marks!:', error);
+        //     })
+        //     .finally(() => setLoading(false));
+        fetchAll();
     }, []);
 
     function fetchPage(url){
@@ -57,6 +62,47 @@ const Students = () => {
             .finally(() => setLoading(false));
     }
 
+    function fetchAll(){
+        axios.get(`http://localhost:8001/api/students/${subjectId}`, {
+            withCredentials: true,
+        })
+            .then(response => {
+                console.log(response);
+                setStudentsMarks(response.data.data);
+                setPaginationLinks(response.data.links);
+                console.log(paginationLinks);
+            })
+            .catch(error => {
+                console.error('Error while getting marks!:', error);
+            })
+            .finally(() => setLoading(false));;
+    }
+
+    function handleSearchSubmit(e){
+        e.preventDefault();
+        console.log('Searching for:', searchTerm);
+        // Perform search or fetch operation here
+        if(!searchTerm || searchTerm.trim()==='') {
+            fetchAll();
+            return;
+        }
+        setLoading(true);
+        axios.get(`http://localhost:8001/api/students/${subjectId}/?search=${searchTerm}`, {
+            withCredentials: true,
+        })
+            .then(response => {
+                console.log(response);
+                setStudentsMarks(response.data.data);
+                setPaginationLinks(response.data.links);
+                console.log(paginationLinks);
+            })
+            .catch(error => {
+                console.error('Error while getting marks!:', error);
+            })
+            .finally(() => setLoading(false));
+
+    }
+
     if (loading) {
         return <Spinner />;
     }
@@ -66,7 +112,24 @@ const Students = () => {
 
     <div>
         <div className='mt-1 px-2'>
-          <h2>Students in your course</h2>
+            <div className='d-flex justify-content-between align-items-center'>
+                <h2>Students in your course</h2>
+                  <form onSubmit={handleSearchSubmit} className='d-flex'>
+                      <input
+                          type='text'
+                          className='form-control me-2'
+                          placeholder='Search...'
+                          value={searchTerm}
+                          onChange={e => setSearchTerm(e.target.value)}
+                      />
+                      <button
+                          type='submit'
+                          className='btn btn-primary'
+                      >
+                          <BsSearch />
+                      </button>
+                  </form>
+          </div>
           { studentsMarks==null ? "No students in your course" : studentsMarks.map((studentMark) => (
               <OneStudent studentMark={studentMark} setModalMessage={setModalMessage} setShowModal={setShowModal} key={studentMark.id} ></OneStudent>
           )) }
@@ -116,6 +179,7 @@ const modalStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1050
 };
 
 const modalContentStyle = {
@@ -123,6 +187,7 @@ const modalContentStyle = {
     padding: '20px',
     borderRadius: '5px',
     textAlign: 'center',
+    zIndex: 1060
 };
 
 export default Students;
