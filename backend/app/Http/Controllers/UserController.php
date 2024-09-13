@@ -27,6 +27,9 @@ class UserController extends Controller
         try{
             
             $perPage = empty($request->perPage) ? 5 : $request->perPage;
+            $sortBy = $request->input('sort', 'mark');
+            $sortDirection = empty($request->sortDirection) ? "DESC" : $request->sortDirection;
+
 
             if(auth()->user()->isTeacher()){
                 $subject = Subject::where('teacher_id', auth()->user()->id)->first();
@@ -58,7 +61,7 @@ class UserController extends Controller
                 });
             }
 
-            $results = $query->paginate($perPage);
+            $results = $query->orderBy($sortBy, $sortDirection)->paginate($perPage);
 
             return response()->json($results);
         } catch (Throwable $th) {
