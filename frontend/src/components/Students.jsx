@@ -78,6 +78,48 @@ const Students = () => {
             .finally(() => setLoading(false));;
     }
 
+    function handleHighest(){
+        setLoading(true);
+        axios.get(`http://localhost:8001/api/students/${subjectId}/`, {
+            params: {
+                sortBy: "mark",
+                sortDirection: 'desc',
+            },
+            withCredentials: true,
+        })
+            .then(response => {
+                console.log(response);
+                setStudentsMarks(response.data.data);
+                setPaginationLinks(response.data.links);
+                console.log(paginationLinks);
+            })
+            .catch(error => {
+                console.error('Error while getting marks!:', error);
+            })
+            .finally(() => setLoading(false));
+    }
+
+    function handleLowest() {
+        setLoading(true);
+        axios.get(`http://localhost:8001/api/students/${subjectId}/`, {
+            params: {
+                sortBy: "mark",
+                sortDirection: 'asc',
+            },
+            withCredentials: true,
+        })
+            .then(response => {
+                console.log(response);
+                setStudentsMarks(response.data.data);
+                setPaginationLinks(response.data.links);
+                console.log(paginationLinks);
+            })
+            .catch(error => {
+                console.error('Error while getting marks!:', error);
+            })
+            .finally(() => setLoading(false));
+    }
+
     function handleSearchSubmit(e){
         e.preventDefault();
         console.log('Searching for:', searchTerm);
@@ -113,7 +155,18 @@ const Students = () => {
     <div>
         <div className='mt-1 px-2'>
             <div className='d-flex justify-content-between align-items-center'>
-                <h2>Students in your course</h2>
+                <div>
+                  <h2>Students in your course</h2>
+                  <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                          Sort by
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                          <li><button className="dropdown-item" onClick={handleHighest}>Highest grade</button></li>
+                          <li><button className="dropdown-item" onClick={handleLowest}>Lowest grade</button></li>
+                      </ul>
+                  </div>
+                </div>
                   <form onSubmit={handleSearchSubmit} className='d-flex'>
                       <input
                           type='text'
